@@ -8,6 +8,8 @@ module.exports = {
         '^lightning/platformShowToastEvent$':
             '<rootDir>/force-app/test/jest-mocks/lightning/platformShowToastEvent',
         '^lightning/uiRecordApi$':
+            '<rootDir>/force-app/test/jest-mocks/lightning/uiRecordApi',
+        '^lightning/messageService$':
             '<rootDir>/force-app/test/jest-mocks/lightning/uiRecordApi'
     },
     setupFiles: ['jest-canvas-mock']
