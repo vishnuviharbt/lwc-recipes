@@ -4,12 +4,7 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { reduceErrors } from 'c/ldsUtils';
 
 // Import message service features required for subscribing and the message channel
-import {
-    subscribe,
-    unsubscribe,
-    APPLICATION_SCOPE,
-    MessageContext
-} from 'lightning/messageService';
+import { subscribe, MessageContext } from 'lightning/messageService';
 import recordSelected from '@salesforce/messageChannel/Record_Selected__c';
 
 import NAME_FIELD from '@salesforce/schema/Contact.Name';
@@ -52,19 +47,11 @@ export default class LmsSubscriberWebComponent extends LightningElement {
 
     // Encapsulate logic for LMS subscribe/unsubsubscribe
     subscribeToMessageChannel() {
-        if (!this.subscription) {
-            this.subscription = subscribe(
-                this.messageContext,
-                recordSelected,
-                (message) => this.handleMessage(message),
-                { scope: APPLICATION_SCOPE }
-            );
-        }
-    }
-
-    unsubscribeToMessageChannel() {
-        unsubscribe(this.subscription);
-        this.subscription = null;
+        this.subscription = subscribe(
+            this.messageContext,
+            recordSelected,
+            (message) => this.handleMessage(message)
+        );
     }
 
     // Handler for message received by component
@@ -72,13 +59,10 @@ export default class LmsSubscriberWebComponent extends LightningElement {
         this.recordId = message.recordId;
     }
 
-    // Standard lifecycle hooks used to sub/unsub to message channel
+    // Standard lifecycle hooks used to subscribe to message channel
+    // Getting MessageContext with @wire means component will auto-unsubscribe
     connectedCallback() {
         this.subscribeToMessageChannel();
-    }
-
-    disconnectedCallback() {
-        this.unsubscribeToMessageChannel();
     }
 
     // Helper

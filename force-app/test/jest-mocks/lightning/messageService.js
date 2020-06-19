@@ -7,3 +7,4 @@ export const publish = () => {};
 export const subscribe = () => {};
 export const unsubscribe = () => {};
 export const APPLICATION_SCOPE = '';
+export const MessageContext = () => {};

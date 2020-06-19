@@ -11,6 +11,7 @@ import getContactList from '@salesforce/apex/ContactController.getContactList';
 
 // Realistic data with a list of contacts
 const mockGetContactList = require('./data/getContactList.json');
+
 // An empty list of records to verify the component does something reasonable
 // when there is no data to display
 const mockGetContactListNoRecords = require('./data/getContactListNoRecords.json');
@@ -26,6 +27,17 @@ jest.mock('lightning/messageService', () => {
     };
 });
 
+// mock the Message Channel
+jest.mock(
+    '@salesforce/messageChannel/Record_Selected__c',
+    () => {
+        return {
+            recordSelected: 'mock_channel_id'
+        };
+    },
+    { virtual: true }
+);
+
 // Register as a standard wire adapter because the component under test requires this adapter.
 // We don't exercise this wire adapter in the tests.
 registerTestWireAdapter(MessageContext);
@@ -37,22 +49,6 @@ describe('c-lms-publisher-web-component', () => {
             document.body.removeChild(document.body.firstChild);
         }
     });
-
-    // it('registers and unregisters the pubsub listener during the component lifecycle', () => {
-    //     // Create initial element
-    //     const element = createElement('c-lms-publisher-web-component', {
-    //         is: LmsPublisherWebComponent
-    //     });
-    //     document.body.appendChild(element);
-
-    //     // Validate if pubsub got registered after connected to the DOM
-    //     expect(registerListener.mock.calls.length).toBe(1);
-    //     expect(registerListener.mock.calls[0][0]).toEqual('searchKeyChange');
-
-    //     // Validate if pubsub got unregistered after disconnected from the DOM
-    //     document.body.removeChild(element);
-    //     expect(unregisterAllListeners.mock.calls.length).toBe(1);
-    // });
 
     describe('getContactList @wire data', () => {
         it('renders data of one record', () => {
