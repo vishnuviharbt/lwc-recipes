@@ -42,6 +42,7 @@ export default class LmsSubscriberWebComponent extends LightningElement {
         }
     }
 
+    // MessageContext wire adapter handles subscription state, include unsubscribing during component destruction lifecycle
     @wire(MessageContext)
     messageContext;
 

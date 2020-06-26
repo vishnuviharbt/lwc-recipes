@@ -19,22 +19,22 @@ const mockGetRecordNoPicture = require('./data/getRecordNoPicture.json');
 const getRecordAdapter = registerLdsTestWireAdapter(getRecord);
 
 // Mock out the event firing function to verify it was called with expected parameters.
-jest.mock('lightning/messageService', () => {
-    return {
-        subscribe: jest.fn(),
-        MessageContext: jest.fn()
-    };
-});
+// jest.mock('lightning/messageService', () => {
+//     return {
+//         subscribe: jest.fn(),
+//         MessageContext: jest.fn()
+//     };
+// });
 
-jest.mock(
-    '@salesforce/messageChannel/Record_Selected__c',
-    () => {
-        return {
-            recordSelected: 'mock_channel_id'
-        };
-    },
-    { virtual: true }
-);
+// jest.mock(
+//     '@salesforce/messageChannel/Record_Selected__c',
+//     () => {
+//         return {
+//             recordSelected: 'mock_channel_id'
+//         };
+//     },
+//     { virtual: true }
+// );
 
 // Register as a standard wire adapter because the component under test requires this adapter.
 // We don't exercise this wire adapter in the tests.
@@ -60,47 +60,66 @@ describe('c-lms-subscriber-web-component', () => {
         expect(subscribe.mock.calls[0][1]).toBe(recordSelected);
     });
 
-    // describe('getRecord @wire data', () => {
-    //     it('renders contact details with picture', () => {
-    //         // Create element
-    //         const element = createElement('c-lms-subscriber-web-component', {
-    //             is: LmsSubscriberWebComponent
-    //         });
-    //         document.body.appendChild(element);
+    describe('getRecord @wire data', () => {
+        it('renders contact details with picture', () => {
+            jest.mock('lightning/messageService', () => {
+                return {
+                    subscribe: (
+                        messageContext,
+                        messageChannel,
+                        messageHandler
+                    ) => {
+                        messageHandler({ recordId: '001' });
+                    }
+                };
+            });
 
-    //         // Emit data from @wire
-    //         getRecordAdapter.emit(mockGetRecord);
+            // Create element
+            const element = createElement('c-lms-subscriber-web-component', {
+                is: LmsSubscriberWebComponent
+            });
+            document.body.appendChild(element);
 
-    //         // Return a promise to wait for any asynchronous DOM updates. Jest
-    //         // will automatically wait for the Promise chain to complete before
-    //         // ending the test and fail the test if the promise rejects.
-    //         return Promise.resolve().then(() => {
-    //             // Select elements for validation
-    //             const imgEl = element.shadowRoot.querySelector('img');
-    //             expect(imgEl.src).toBe(
-    //                 mockGetRecord.result.fields.Picture__c.value
-    //             );
+            const config = getRecordAdapter.getLastConfig();
+            expect(config).toBe('001');
+            // expect(recordId).toBe(mockGetRecord.result.fields.Id.value);
 
-    //             const nameEl = element.shadowRoot.querySelector('p');
-    //             expect(nameEl.textContent).toBe(
-    //                 mockGetRecord.result.fields.Name.value
-    //             );
+            // Emit data from @wire
+            // getRecordAdapter.emit(mockGetRecord);
 
-    //             const phoneEl = element.shadowRoot.querySelector(
-    //                 'lightning-formatted-phone'
-    //             );
-    //             expect(phoneEl.value).toBe(
-    //                 mockGetRecord.result.fields.Phone.value
-    //             );
+            // Return a promise to wait for any asynchronous DOM updates. Jest
+            // will automatically wait for the Promise chain to complete before
+            // ending the test and fail the test if the promise rejects.
+            // return Promise.resolve().then(() => {
 
-    //             const emailEl = element.shadowRoot.querySelector(
-    //                 'lightning-formatted-email'
-    //             );
-    //             expect(emailEl.value).toBe(
-    //                 mockGetRecord.result.fields.Email.value
-    //             );
-    //         });
-    //     });
+            //     const {recordId} = getRecordAdapter.getLastConfig();
+
+            //     // Select elements for validation
+            //     // const imgEl = element.shadowRoot.querySelector('img');
+            //     // expect(imgEl.src).toBe(
+            //     //     mockGetRecord.result.fields.Picture__c.value
+            //     // );
+
+            //     const nameEl = element.shadowRoot.querySelector('p');
+            //     expect(nameEl.textContent).toEqual(
+            //         mockGetRecord.result.fields.Name.value
+            //     );
+
+            //         const phoneEl = element.shadowRoot.querySelector(
+            //             'lightning-formatted-phone'
+            //         );
+            //         expect(phoneEl.value).toBe(
+            //             mockGetRecord.result.fields.Phone.value
+            // );
+
+            // const emailEl = element.shadowRoot.querySelector(
+            //     'lightning-formatted-email'
+            // );
+            // expect(emailEl.value).toBe(
+            //     mockGetRecord.result.fields.Email.value
+            // );
+        });
+    });
 
     //     it('renders contact details without picture', () => {
     //         // Create element
@@ -139,31 +158,31 @@ describe('c-lms-subscriber-web-component', () => {
     //                 mockGetRecordNoPicture.result.fields.Email.value
     //             );
     //         });
-    //     });
-    // });
-
-    // describe('getRecord @wire error', () => {
-    //     it('displays a toast message', () => {
-    //         // Create initial element
-    //         const element = createElement('c-lms-subscriber-web-component', {
-    //             is: LmsSubscriberWebComponent
-    //         });
-    //         document.body.appendChild(element);
-
-    //         // Mock handler for toast event
-    //         const handler = jest.fn();
-    //         // Add event listener to catch toast event
-    //         element.addEventListener(ShowToastEventName, handler);
-
-    //         // Emit error from @wire
-    //         getRecordAdapter.error();
-
-    //         // Return a promise to wait for any asynchronous DOM updates. Jest
-    //         // will automatically wait for the Promise chain to complete before
-    //         // ending the test and fail the test if the promise rejects.
-    //         return Promise.resolve().then(() => {
-    //             expect(handler).toHaveBeenCalled();
-    //         });
-    //     });
     // });
 });
+
+// describe('getRecord @wire error', () => {
+//     it('displays a toast message', () => {
+//         // Create initial element
+//         const element = createElement('c-lms-subscriber-web-component', {
+//             is: LmsSubscriberWebComponent
+//         });
+//         document.body.appendChild(element);
+
+//         // Mock handler for toast event
+//         const handler = jest.fn();
+//         // Add event listener to catch toast event
+//         element.addEventListener(ShowToastEventName, handler);
+
+//         // Emit error from @wire
+//         getRecordAdapter.error();
+
+//         // Return a promise to wait for any asynchronous DOM updates. Jest
+//         // will automatically wait for the Promise chain to complete before
+//         // ending the test and fail the test if the promise rejects.
+//         return Promise.resolve().then(() => {
+//             expect(handler).toHaveBeenCalled();
+//         });
+//     });
+// });
+// });
